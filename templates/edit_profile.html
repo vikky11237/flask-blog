@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Edit Profile</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" 
+                                 class="rounded-circle mb-3" 
+                                 style="width: 150px; height: 150px; object-fit: cover;"
+                                 alt="Profile Picture">
+                            <div class="mb-3">
+                                <label for="profile_pic" class="form-label">Change Profile Picture</label>
+                                <input type="file" class="form-control" id="profile_pic" name="profile_pic" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ user.name or '' }}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio or '' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Change Password</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="current_password" name="current_password">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{{ url_for('profile', username=user.username) }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const originalValues = {
+        name: "{{ user.name|default('', true) }}",
+        email: "{{ user.email }}",
+        bio: "{{ user.bio|default('', true) }}"
+    };
+
+    function checkChanges() {
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const bioInput = document.getElementById('bio');
+        const submitBtn = document.querySelector('button[type="submit"]');
+        
+        const hasChanges = 
+            nameInput.value !== originalValues.name ||
+            emailInput.value !== originalValues.email ||
+            bioInput.value !== originalValues.bio ||
+            document.getElementById('profile_pic').files.length > 0 ||
+            document.getElementById('current_password').value ||
+            document.getElementById('new_password').value ||
+            document.getElementById('confirm_password').value;
+            
+        submitBtn.disabled = !hasChanges;
+    }
+
+    // Add event listeners to all form inputs
+    document.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', checkChanges);
+    });
+
+    // Initial check
+    checkChanges();
+</script>
+
+<style>
+    .card {
+        background: var(--metallic-dark);
+        border: 1px solid var(--metallic-accent);
+    }
+    
+    .form-control {
+        background: var(--metallic-black);
+        border-color: var(--metallic-accent);
+        color: var(--text-primary);
+    }
+    
+    .form-control:focus {
+        background: var(--metallic-dark);
+        border-color: var(--accent-color);
+        color: var(--text-primary);
+        box-shadow: 0 0 0 0.25rem rgba(100, 108, 255, 0.25);
+    }
+
+    button[type="submit"]:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %} 

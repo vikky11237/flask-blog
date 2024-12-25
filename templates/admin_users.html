@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Manage Users</h4>
+        <span class="badge bg-primary">Total Users: {{ users|length }}</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" 
+                                 class="rounded-circle me-2"
+                                 style="width: 30px; height: 30px; object-fit: cover;"
+                                 alt="Profile">
+                            {{ user.username }}
+                        </td>
+                        <td>{{ user.name or 'Not set' }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.joined_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if user.is_admin %}
+                            <span class="badge bg-danger">Admin</span>
+                            {% else %}
+                            <span class="badge bg-secondary">User</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.id != session.get('user_id') %}
+                            <div class="btn-group">
+                                <form action="{{ url_for('toggle_admin', user_id=user.id) }}" method="post" class="d-inline me-2">
+                                    <button type="submit" class="btn btn-sm {% if user.is_admin %}btn-warning{% else %}btn-success{% endif %}"
+                                            onclick="return confirm('Are you sure you want to {% if user.is_admin %}remove{% else %}grant{% endif %} admin privileges for {{ user.username }}?')">
+                                        {% if user.is_admin %}
+                                        Remove Admin
+                                        {% else %}
+                                        Make Admin
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('admin_reset_password', user_id=user.id) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Are you sure you want to reset the password for {{ user.username }}? The new password will be: 123123')">
+                                        Reset Password
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table {
+        color: var(--text-primary);
+    }
+    
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    .table tbody tr:hover {
+        background: var(--metallic-accent);
+    }
+    
+    .badge {
+        font-size: 0.85em;
+        padding: 0.4em 0.8em;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    /* Tooltip styles */
+    [data-tooltip] {
+        position: relative;
+        cursor: help;
+    }
+
+    [data-tooltip]:hover::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 5px 10px;
+        background: var(--metallic-dark);
+        color: var(--text-primary);
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 1000;
+    }
+</style>
+{% endblock %} 

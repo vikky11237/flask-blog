@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --metallic-black: #0a0a0a;
+            --metallic-dark: #1a1a1a;
+            --metallic-accent: #2a2a2a;
+            --metallic-highlight: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-color: #646cff;
+            --accent-hover: #868cff;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--metallic-black) 0%, var(--metallic-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Metallic Pattern Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(0,0,0,0.1) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.1) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.1) 75%);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, var(--metallic-black), var(--metallic-dark));
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1050;
+        }
+
+        .navbar-brand {
+            color: var(--accent-color) !important;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, var(--metallic-dark), var(--metallic-black));
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--accent-hover), var(--accent-color));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .form-control {
+            background-color: var(--metallic-black);
+            border: 1px solid var(--metallic-highlight);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus {
+            background-color: var(--metallic-dark);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(100, 108, 255, 0.25);
+        }
+
+        .dropdown {
+            position: relative;
+            z-index: 1051;
+        }
+
+        .dropdown-menu {
+            z-index: 1052;
+            background: linear-gradient(145deg, var(--metallic-dark), var(--metallic-black));
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: absolute;
+        }
+
+        .dropdown-item {
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--metallic-highlight);
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .dropdown-menu.show {
+            animation: dropdownFade 0.2s ease;
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--metallic-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Profile Image Effects */
+        .rounded-circle {
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 15px rgba(100, 108, 255, 0.3);
+        }
+
+        /* Alert Styling */
+        .alert {
+            background: linear-gradient(145deg, var(--metallic-dark), var(--metallic-black));
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        /* Text Highlights */
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Container Glass Effect */
+        .container {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Card Title Gradient */
+        .card-title {
+            background: linear-gradient(45deg, var(--text-primary), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        /* Button Glow Effect */
+        .btn:focus {
+            box-shadow: 0 0 15px rgba(100, 108, 255, 0.5);
+        }
+
+        /* Link Styling */
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+        }
+
+        /* Ensure body::before pattern stays at the bottom */
+        body::before {
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Blog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    {% if session.get('is_admin') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('create_post') }}">New Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_users') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+                            </svg>
+                            Manage Users
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if session.get('user_id') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-outline-light btn-sm ms-2" href="#" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                           style="border-radius: 20px; padding: 6px 15px;">
+                            <img src="{{ url_for('static', filename='uploads/' + session.get('profile_pic', 'default_profile.png')) }}"
+                                 class="rounded-circle me-1"
+                                 style="width: 24px; height: 24px; object-fit: cover;"
+                                 alt="Profile">
+                            {{ session.get('name') or session.get('username') }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if session.get('is_admin') %}
+                            <li><span class="dropdown-item-text text-info">Admin User</span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 
